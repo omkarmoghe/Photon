@@ -119,4 +119,9 @@ def within_distance(loc1, loc2):
     return d < 1
 
 def get_location_title(lat, lon):
-    return geocoder.google([lat, lon], method='reverse')
+    try:
+        location = geocoder.google([lat, lon], method='reverse')
+    except Exception as e:
+        location = "Near ({}, {})".format(lat, lon)
+
+    return location
