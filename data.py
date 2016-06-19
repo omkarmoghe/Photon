@@ -139,6 +139,8 @@ def get_location_title(lat, lon):
         location = geocoder.google([lat, lon], method='reverse')
     except Exception as e:
         print str(e)
+
+    if not location:
         location = "Near ({}, {})".format(lat, lon)
 
     return location
