@@ -1,5 +1,6 @@
 # set up mongo
 import geocoder
+import datetime
 from pymongo import MongoClient
 from math import sin, cos, atan2, sqrt
 
@@ -75,7 +76,8 @@ def find_matching_event(image_object):
         for event_image_id in event_images:
             event_image = images.find_one({'identifier': event_image_id})
             
-            if within_distance((img_latitude, img_longitude), (event_image['latitude'], event_image['longitude'])):
+            if within_distance((img_latitude, img_longitude), (event_image['latitude'], event_image['longitude']),
+                                int(img_timestamp), int(event_image['timestamp'])):
                 if len(event_images) == 1:
                     last_image = images.find_one({'identifier': event_images[0]})
                     last_owner = users.find_one({'_id': last_image['user_id']})
@@ -106,7 +108,7 @@ def find_matching_event(image_object):
     return event_object
 
 
-def within_distance(loc1, loc2):
+def within_distance(loc1, loc2, timestamp1, timestamp2):
     lat1, lon1 = float(loc1[0]), float(loc1[1])
     lat2, lon2 = float(loc2[0]), float(loc2[1])
 
@@ -116,7 +118,13 @@ def within_distance(loc1, loc2):
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     d = 3961 * c
 
-    return d < 1
+    time1 = datetime.datetime.fromtimestamp(timestamp1)
+    time2 = datetime.datetime.fromtimestamp(timestamp2)
+    time_delta = time1 - time2
+    t = abs(time_delta.seconds) / 60
+    print t
+
+    return d <= 1 and t <= 30
 
 def get_location_title(lat, lon):
     try:
