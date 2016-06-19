@@ -138,7 +138,7 @@ def upload_metadata():
         users.update_one({'_id': user_id}, {'$set': user}, upsert=True)
 
         should_upload = bool(image_id in user['owed_images'])
-        return flask.jsonify({"success": True, 'upload': should_upload})
+        return flask.jsonify({"success": True, 'upload': True})
     else:
         return flask.jsonify({"success": False, 'error': 'User not found.'})
 
