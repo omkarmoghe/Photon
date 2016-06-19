@@ -6,12 +6,12 @@ db = client.photos
 
 # Returns the next incremented ID for the given sequenceName (e.g userid, imageid).
 def getNextId(sequenceName):
-    sequenceDoc = db.counters.find_and_modify({
-        'query': {'_id': sequenceName},
-        'update': {'$inc': {'sequence_value': 1}},
-        'new': True
-    })
-    return sequenceDoc.sequence_value
+    sequenceDoc = db.counters.find_and_modify(
+        {'_id': sequenceName},
+        {'$inc': {'sequence_value': 1}},
+        new=True
+    )
+    return sequenceDoc['sequence_value']
 
 # TODO: MAGIC!
 def get_user_events(user_id):
