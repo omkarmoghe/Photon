@@ -103,6 +103,9 @@ def find_matching_event(image_object):
                 event_object = event
                 break
 
+        if event_object:
+            break
+
     if not event_object:
         g = get_location_title(img_latitude, img_longitude)
         event_object = {
