@@ -131,7 +131,7 @@ def within_distance(loc1, loc2, timestamp1, timestamp2):
     t = abs(time_delta.seconds) / 60
     print t
 
-    return d <= 1 and t <= 30
+    return d <= .2 and t <= 30
 
 
 def get_location_title(lat, lon):
