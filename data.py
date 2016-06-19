@@ -44,16 +44,16 @@ def get_user_events(user_id):
             images_payload = list()
             for image_id in image_list:
                 image = images.find_one({'identifier': image_id})
-
-                if image_id in user['photos']:
-                    image['owner'] = user['name']
-                    images_payload.append(image)
-                else:
-                    owner = users.find_one({'_id': int(image['user_id'])})
-                    for contact in contacts:
-                        if owner['number'] == contact['number']:
-                            image['owner'] = owner['name']
-                            images_payload.append(image)
+                if image['file']:
+                    if image_id in user['photos']:
+                        image['owner'] = user['name']
+                        images_payload.append(image)
+                    else:
+                        owner = users.find_one({'_id': int(image['user_id'])})
+                        for contact in contacts:
+                            if owner['number'] == contact['number']:
+                                image['owner'] = owner['name']
+                                images_payload.append(image)
 
             event['images'] = images_payload
             events_payload.append(event)
