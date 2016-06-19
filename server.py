@@ -15,7 +15,7 @@ db = client.photos
 
 @app.route('/')
 def hello_world():
-    return 'Hello, World!'
+    return 'P H O T O S'
 
 
 @app.route('/register', methods=['POST'])
@@ -90,12 +90,12 @@ def upload_contacts():
 @app.route('/get_events', methods=['POST'])
 def get_events():
     user_id = request.form['user_id']
-    return flask.jsonify(data.get_user_events(user_id))
+    return flask.jsonify(data.get_user_events(int(user_id)))
 
 
 @app.route('/upload_metadata', methods=['POST'])
 def upload_metadata():
-    metadata = request.get_json()
+    metadata = request.form
 
     # get collections
     users = db.users
@@ -103,7 +103,6 @@ def upload_metadata():
 
     # create image object
     image_id = metadata['identifier'].replace("/", "-")
-    print image_id
     image_object = {
         'user_id': int(metadata['user_id']),
         'identifier': metadata['identifier'],
@@ -126,7 +125,8 @@ def upload_metadata():
         # find a matching event for the metadata
         event = data.find_matching_event(image_object)
         user = users.find_one({'_id': user_id})
-        user['events'].append(event['_id'])
+        if event['_id'] not in user['events']:
+            user['events'].append(event['_id'])
         users.update_one({'_id': user_id}, {'$set': user}, upsert=True)
 
         should_upload = bool(image_id in user['owed_images'])
