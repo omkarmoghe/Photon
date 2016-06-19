@@ -59,9 +59,11 @@ def find_matching_event(image_object):
                 break
 
     if not event_object:
+        g = get_location_title(img_latitude, img_longitude)
         event_object = {
             '_id': getNextId('eventid'),
-            'images': [img_id]
+            'images': [img_id],
+            'title': g.city
         }
     
     events.update_one({'_id': event_object['_id']}, {'$set': event_object}, upsert=True)
@@ -80,3 +82,6 @@ def within_distance(loc1, loc2):
     d = 3961 * c
 
     return d < 1
+
+def get_location_title(lat, lon):
+    return geocoder.google([lat, lon], method='reverse')
