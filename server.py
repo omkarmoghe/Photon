@@ -105,6 +105,11 @@ def upload_metadata():
 
     # create image object
     image_id = metadata['identifier'].replace("/", "-")
+
+    image_object = images.find_one({'identifier': image_id})
+    if image_object:
+        return flask.jsonify({"success": True})
+
     image_object = {
         'user_id': int(metadata['user_id']),
         'identifier': metadata['identifier'],
