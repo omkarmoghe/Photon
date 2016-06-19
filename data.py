@@ -30,7 +30,7 @@ def find_matching_event(image_object):
     img_latitude = image_object['latitude']
     img_longitude = image_object['longitude']
     img_timestamp = image_object['timestamp']
-    img_id = image_object['_id']
+    img_id = image_object['identifier']
 
     event_object = None
 
@@ -38,17 +38,22 @@ def find_matching_event(image_object):
     for event in matching_events:
         event_images = event['images']
         for event_image_id in event_images:
-            event_image = images.find_one({'_id': event_image_id})
+            event_image = images.find_one({'identifier': event_image_id})
             
             if within_distance((img_latitude, img_longitude), (event_image['latitude'], event_image['longitude'])):
                 if len(event_images) == 1:
-                    last_image = images.find_one({'_id': event_images[0]})
-                    print type(last_image)
+                    last_image = images.find_one({'identifier': event_images[0]})
                     last_owner = users.find_one({'_id': last_image['user_id']})
-                    last_owner['owed_images'].append(last_image['_id'])
-                event_images.append(img_id)
+                    last_owner['owed_images'].append(last_image['identifier'])
+                    users.update_one({'_id': last_owner['_id']}, {'$set': last_owner}, upsert=True)
+
+                if img_id not in event_images:
+                    event_images.append(img_id)
+                
                 img_user = users.find_one({'_id': image_object['user_id']})
-                img_user['owed_images'].append(img_id)
+                if img_id not in img_user['owed_images']:
+                    img_user['owed_images'].append(img_id)
+                    users.update_one({'_id': img_user['_id']}, {'$set': img_user}, upsert=True)
 
                 event_object = event
                 break
@@ -58,7 +63,8 @@ def find_matching_event(image_object):
             '_id': getNextId('eventid'),
             'images': [img_id]
         }
-        events.insert_one(event_object)
+    
+    events.update_one({'_id': event_object['_id']}, {'$set': event_object}, upsert=True)
 
     return event_object
 
