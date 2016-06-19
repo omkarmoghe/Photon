@@ -1,6 +1,6 @@
 # set up mongo
 from pymongo import MongoClient
-import math
+from math import sin, cos, atan2, sqrt
 
 mongo_address = 'mongodb://omkar:photos123@ds037175.mlab.com:37175/photos'
 client = MongoClient(mongo_address)
@@ -42,7 +42,8 @@ def find_matching_event(image_object):
             
             if within_distance((img_latitude, img_longitude), (event_image['latitude'], event_image['longitude'])):
                 if len(event_images) == 1:
-                    last_image = event_images[0]
+                    last_image = images.find_one({'_id': event_images[0]})
+                    print type(last_image)
                     last_owner = users.find_one({'_id': last_image['user_id']})
                     last_owner['owed_images'].append(last_image['_id'])
                 event_images.append(img_id)
@@ -63,8 +64,8 @@ def find_matching_event(image_object):
 
 
 def within_distance(loc1, loc2):
-    lat1, lon1 = loc1
-    lat2, lon2 = loc2
+    lat1, lon1 = float(loc1[0]), float(loc1[1])
+    lat2, lon2 = float(loc2[0]), float(loc2[1])
 
     dlon = lon2 - lon1
     dlat = lat2 - lat1

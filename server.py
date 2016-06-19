@@ -72,6 +72,7 @@ def upload_metadata():
 
     # create image object
     image_id = data.getNextId("imageid")
+    print image_id
     image_object = {
         'user_id': int(metadata['user_id']),
         'latitude': metadata['latitude'],
@@ -105,6 +106,7 @@ def upload_image():
     filename = ''.join(random.choice('0123456789ABCDEF') for i in range(8))
     print "Saving file to images/"+filename
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    
     return flask.jsonify({
         "filename": filename,
         "success": True
