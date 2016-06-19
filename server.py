@@ -107,7 +107,7 @@ def upload_metadata():
 @app.route('/upload_image', methods=['POST'])
 def upload_image():
     file = request.files['file']
-    filename = ''.join(random.choice('0123456789ABCDEF') for i in range(8))
+    filename = file.filename
     print "Saving file to images/"+filename
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     
@@ -124,6 +124,12 @@ def get_owed_images():
     user_id = metadata['user_id']
     user = users.find_one({'_id': user_id})
     return user['owed_images']
+
+@app.route('/images/<filename>')
+def get_file(filename):
+    resp = flask.make_response(open("images/"+filename).read())
+    resp.content_type = "image/jpeg"
+    return resp
 
 
 
