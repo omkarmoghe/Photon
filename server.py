@@ -149,18 +149,27 @@ def upload_image():
     file = request.files['file']
     identifier = file.filename.replace("/", "-")
     filename = os.path.join(app.config['UPLOAD_FOLDER'], identifier)
-    print "Saving file to " + filename
-    file.save(filename)
-
     file_obj = db.images.find_one({"identifier": identifier})
 
     if file_obj is not None:
-        file_obj["file"] = filename
-        return flask.jsonify({
-            "filename": filename,
-            "success": True
-        })
+        if file_obj["file"] is None:
+            # Let's save the file
+            print "Saving file to " + filename
+            file.save(filename)
+            file_obj["file"] = filename
+            return flask.jsonify({
+                "filename": filename,
+                "success": True
+            })
+        else:
+            # We already have the file saved, no need to upload it again
+            return flask.jsonify({
+                "filename": filename,
+                "success": False,
+                "message": "That image has already been uploaded! I don't want to upload it twice."
+            })
     else:
+        # We don't know what file the client is talking about.
         return flask.jsonify({
             "filename": filename,
             "success": False,
