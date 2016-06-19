@@ -27,10 +27,14 @@ def register():
     if not user_object:
         # Register user
         user_id = data.getNextId("userid")
+
+        # Sanitize phone number
+        number = request_body['number'].strip().replace("-","")
+
         user_object = {
             '_id': user_id,
             'name': request_body['name'],
-            'number': request_body['number'],
+            'number': number,
             'contacts': [],
             'photos': [],
             'owed_images': [],
