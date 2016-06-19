@@ -56,7 +56,7 @@ def upload_contacts():
     data = request.get_json()
 
     users = db.users
-    user_id = data['user_id']
+    user_id = int(data['user_id'])
     user = users.find_one({'_id': user_id})
     contacts_list = data['contacts']
 
