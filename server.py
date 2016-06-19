@@ -6,23 +6,33 @@ app = flask.Flask(__name__)
 mongo_address = 'mongodb://omkar:photos123@ds037175.mlab.com:37175/photos'
 client = MongoClient(mongo_address)
 db = client.photos
-coll = db.data
 
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
 
-@app.route('/reg_user')
-def reg_user():
-    # Register user
-    user_object = {
-        contacts: [],
-        photos: []
-    }
-    user_id = 1
-    return flask.jsonify({
-        'user_id': user_id
-    })
+@app.route('/register', methods=['POST'])
+def register():
+    # get body of request
+    request_body = request.form
+
+    users = db.users    
+    user_object = users.find_one({'number': request_body['number']})
+
+    if not user_object:
+        # Register user
+        user_id = 1  # TODO: generate user id
+        user_object = {
+            '_id': user_id,
+            'name': request_body['name'],
+            'number': request_body['number'],
+            'contacts': [],
+            'photos': []
+        }
+
+        users.insert_one(user_object)
+
+    return flask.jsonify(user_object)
 
 @app.route('/upload_contacts', methods=['POST'])
 def upload_contacts():
