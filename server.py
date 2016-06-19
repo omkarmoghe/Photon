@@ -190,9 +190,16 @@ def get_owed_images():
 
 @app.route('/images/<filename>')
 def get_file(filename):
-    resp = flask.make_response(open("images/" + filename).read())
-    resp.content_type = "image/jpeg"
-    return resp
+    filepath = "images/" + filename
+
+    if os.path.isfile(filepath):
+        resp = flask.make_response(open(filepath).read())
+        resp.content_type = "image/jpeg"
+        return resp
+    else:
+        return flask.jsonify({
+            "error": "That file doesn't exist! :("
+        })
 
 
 if __name__ == "__main__":
