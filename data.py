@@ -140,3 +140,7 @@ def get_location_title(lat, lon):
         location = "Near ({}, {})".format(lat, lon)
 
     return location
+
+
+def sanitize_string(data):
+    return data.strip().replace('-', '').replace('(', '').replace(')', '')

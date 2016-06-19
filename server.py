@@ -34,7 +34,7 @@ def register():
         user_id = data.getNextId("userid")
 
         # Sanitize phone number
-        number = request_body['number'].strip().replace("-", "")
+        number = data.sanitize_string(request_body['number'])
 
         user_object = {
             '_id': user_id,
@@ -53,7 +53,7 @@ def register():
 
 @app.route('/upload_contacts', methods=['POST'])
 def upload_contacts():
-    request_data  = request.get_json()
+    request_data = request.get_json()
 
     users = db.users
     user_id = int(request_data['user_id'])
@@ -61,7 +61,7 @@ def upload_contacts():
     contacts_list = request_data['contacts']
 
     for contact in contacts_list:
-        number = contact['number'].strip().replace("-", "")
+        number = data.sanitize_string(contact['number'])
         name = contact['name']
 
         # Check that data exists
