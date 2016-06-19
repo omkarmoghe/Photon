@@ -84,13 +84,13 @@ def find_matching_event(image_object):
             if within_distance((img_latitude, img_longitude), (event_image['latitude'], event_image['longitude']),
                                int(img_timestamp), int(event_image['timestamp'])):
                 print "match found"
-                if len(event_images) == 1:
-                    last_image = images.find_one(
-                        {'identifier': event_images[0]})
-                    last_owner = users.find_one({'_id': last_image['user_id']})
-                    last_owner['owed_images'].append(last_image['identifier'])
-                    users.update_one({'_id': last_owner['_id']}, {
-                                     '$set': last_owner}, upsert=True)
+                # if len(event_images) == 1:
+                #     last_image = images.find_one(
+                #         {'identifier': event_images[0]})
+                #     last_owner = users.find_one({'_id': last_image['user_id']})
+                #     last_owner['owed_images'].append(last_image['identifier'])
+                #     users.update_one({'_id': last_owner['_id']}, {
+                #                      '$set': last_owner}, upsert=True)
 
                 if img_id not in event_images:
                     event_images.append(img_id)
