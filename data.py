@@ -19,7 +19,41 @@ def getNextId(sequenceName):
 
 # TODO: MAGIC!
 def get_user_events(user_id):
-    pass
+    events_payload = list()
+
+    users = db.users
+    events = db.events
+    images = db.images
+
+    user = users.find_one({'_id': user_id})
+    if not user:
+        return {'error': 'user not found'}
+
+    contacts = user['contacts']
+
+    events_list = user['events']
+    for event_id in events_list:
+        event = events.find_one({'_id': event_id})
+        if not event:
+            continue
+        
+        image_list = event['images']
+
+        # list with images containing real info
+        images_payload = list()
+        for image_id in image_list:
+            image = images.find_one({'identifier': image_id})
+            owner = users.find_one({'_id': int(image['user_id'])})
+
+            for contact in contacts:
+                if owner['number'] == contact['number']:
+                    image['owner'] = owner['name']
+                    images_payload.append(image)
+
+        event['images'] = images_payload
+        events_payload.append(event)
+
+    return events_payload
 
 
 def find_matching_event(image_object):
