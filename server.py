@@ -78,8 +78,9 @@ def upload_contacts():
         }
 
         user['contacts'].append(contact_object)
+    
+    users.update_one({'_id': user_id}, {'$set': user}, upsert=True)
 
-    # write back user object to database
 
     return flask.jsonify({
         'success': True
