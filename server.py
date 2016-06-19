@@ -1,5 +1,8 @@
-import os, flask, data, random, pdb, geocoder
-from flask import request 
+import os
+import flask
+import data
+import pdb
+from flask import request
 from pymongo import MongoClient
 app = flask.Flask(__name__)
 
@@ -31,7 +34,7 @@ def register():
         user_id = data.getNextId("userid")
 
         # Sanitize phone number
-        number = request_body['number'].strip().replace("-","")
+        number = request_body['number'].strip().replace("-", "")
 
         user_object = {
             '_id': user_id,
@@ -51,20 +54,20 @@ def register():
 @app.route('/upload_contacts', methods=['POST'])
 def upload_contacts():
 
-    contact_data  = request.get_json()
+    contact_data = request.get_json()
     users = db.users
     user_id = contact_data['user_id']
     user = users.find_one({'_id': user_id})
 
     for contact in contact_data:
-        number = contact['number'].strip().replace("-","")
+        number = contact['number'].strip().replace("-", "")
         name = contact_data['name']
 
-        #Check that data exists
+        # Check that data exists
         if not number or name:
             continue
 
-        #Check that data is not a duplicate
+        # Check that data is not a duplicate
         for cont in user['contacts']:
             if number == cont['number']:
                 continue
@@ -72,15 +75,14 @@ def upload_contacts():
         contact_id = data.getNextId("contactid")
 
         contact_object = {
-             '_id': contactid,
-             'name': name,
-             'number': number
+            '_id': contact_id,
+            'name': name,
+            'number': number
         }
 
         user['contacts'].append(contact_object)
-    
-    users.update_one({'_id': user_id}, {'$set': user}, upsert=True)
 
+    users.update_one({'_id': user_id}, {'$set': user}, upsert=True)
 
     return flask.jsonify({
         'success': True
@@ -142,7 +144,7 @@ def upload_image():
     file = request.files['file']
     identifier = file.filename.replace("/", "-")
     filename = os.path.join(app.config['UPLOAD_FOLDER'], identifier)
-    print "Saving file to "+filename
+    print "Saving file to " + filename
     file.save(filename)
 
     file_obj = db.images.find_one({"identifier": identifier})
@@ -160,7 +162,7 @@ def upload_image():
             "message": "Coldn't find the existing file object for this image!"
         })
 
-    
+
 @app.route('/get_owed_images', methods=['POST'])
 def get_owed_images():
     metadata = request.get_json()
@@ -169,12 +171,12 @@ def get_owed_images():
     user = users.find_one({'_id': user_id})
     return user['owed_images']
 
+
 @app.route('/images/<filename>')
 def get_file(filename):
-    resp = flask.make_response(open("images/"+filename).read())
+    resp = flask.make_response(open("images/" + filename).read())
     resp.content_type = "image/jpeg"
     return resp
-
 
 
 if __name__ == "__main__":

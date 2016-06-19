@@ -9,7 +9,8 @@ client = MongoClient(mongo_address)
 db = client.photos
 
 
-# Returns the next incremented ID for the given sequenceName (e.g userid, imageid).
+# Returns the next incremented ID for the given sequenceName (e.g userid,
+# imageid).
 def getNextId(sequenceName):
     sequenceDoc = db.counters.find_and_modify(
         {'_id': sequenceName},
@@ -38,7 +39,7 @@ def get_user_events(user_id):
         event = events.find_one({'_id': event_id})
         if not event:
             continue
-        
+
         image_list = event['images']
 
         # list with images containing real info
@@ -75,22 +76,25 @@ def find_matching_event(image_object):
         event_images = event['images']
         for event_image_id in event_images:
             event_image = images.find_one({'identifier': event_image_id})
-            
+
             if within_distance((img_latitude, img_longitude), (event_image['latitude'], event_image['longitude']),
-                                int(img_timestamp), int(event_image['timestamp'])):
+                               int(img_timestamp), int(event_image['timestamp'])):
                 if len(event_images) == 1:
-                    last_image = images.find_one({'identifier': event_images[0]})
+                    last_image = images.find_one(
+                        {'identifier': event_images[0]})
                     last_owner = users.find_one({'_id': last_image['user_id']})
                     last_owner['owed_images'].append(last_image['identifier'])
-                    users.update_one({'_id': last_owner['_id']}, {'$set': last_owner}, upsert=True)
+                    users.update_one({'_id': last_owner['_id']}, {
+                                     '$set': last_owner}, upsert=True)
 
                 if img_id not in event_images:
                     event_images.append(img_id)
-                
+
                 img_user = users.find_one({'_id': image_object['user_id']})
                 if img_id not in img_user['owed_images']:
                     img_user['owed_images'].append(img_id)
-                    users.update_one({'_id': img_user['_id']}, {'$set': img_user}, upsert=True)
+                    users.update_one({'_id': img_user['_id']}, {
+                                     '$set': img_user}, upsert=True)
 
                 event_object = event
                 break
@@ -102,8 +106,9 @@ def find_matching_event(image_object):
             'images': [img_id],
             'title': g.city
         }
-    
-    events.update_one({'_id': event_object['_id']}, {'$set': event_object}, upsert=True)
+
+    events.update_one({'_id': event_object['_id']}, {
+                      '$set': event_object}, upsert=True)
 
     return event_object
 
@@ -126,10 +131,12 @@ def within_distance(loc1, loc2, timestamp1, timestamp2):
 
     return d <= 1 and t <= 30
 
+
 def get_location_title(lat, lon):
     try:
         location = geocoder.google([lat, lon], method='reverse')
     except Exception as e:
+        print str(e)
         location = "Near ({}, {})".format(lat, lon)
 
     return location
