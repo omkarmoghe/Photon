@@ -149,7 +149,7 @@ def upload_metadata():
 def upload_image():
     file = request.files['file']
     identifier = file.filename.replace("/", "-")[:-4]
-    filename = os.path.join(app.config['UPLOAD_FOLDER'], identifier)
+    filename = os.path.join(app.config['UPLOAD_FOLDER'], identifier) + ".jpg"
     file_obj = db.images.find_one({"identifier": identifier})
 
     if file_obj is not None:
