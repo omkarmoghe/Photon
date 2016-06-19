@@ -76,10 +76,11 @@ def upload_metadata():
 
     return flask.jsonify({"success": True})
 
-@app.route('/upload_image', methods=[])
+@app.route('/upload_image', methods=['POST'])
 def upload_image():
     file = request.files['file']
     filename = ''.join(random.choice('0123456789ABCDEF') for i in range(8))
+    print "Saving file to images/"+filename
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     return flask.jsonify({
         "filename": filename,
