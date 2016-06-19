@@ -12,9 +12,11 @@ mongo_address = 'mongodb://omkar:photos123@ds037175.mlab.com:37175/photos'
 client = MongoClient(mongo_address)
 db = client.photos
 
+
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
+
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -41,12 +43,14 @@ def register():
 
     return flask.jsonify(user_object)
 
+
 @app.route('/upload_contacts', methods=['POST'])
 def upload_contacts():
     data = request.form
     return flask.jsonify({
         'success': True
     })
+
 
 @app.route('/get_events', methods=['POST'])
 def get_events():
@@ -64,12 +68,18 @@ def upload_metadata():
 
     # create image object
     image_id = data.getNextId("imageid")
-    image_object = metadata
-    image_object['file'] = None
-    image_object['_id'] = image_id
+    image_object = {
+        'user_id': int(metadata['user_id']),
+        'latitude': metadata['latitude'],
+        'longitude': metadata['longitude'],
+        'timestamp': metadata['timestamp'],
+        'file': None,
+        '_id': image_id
+    }
 
     # add image to user
     user_id = image_object['user_id']
+    print type(user_id)
     user = users.find_one({'_id': user_id})
     if user:
         # add the blank image to the database
@@ -84,6 +94,7 @@ def upload_metadata():
 
     return flask.jsonify({"success": True})
 
+
 @app.route('/upload_image', methods=['POST'])
 def upload_image():
     file = request.files['file']
@@ -94,10 +105,6 @@ def upload_image():
         "filename": filename,
         "success": True
     })
-
-
-
-
 
 
 if __name__ == "__main__":
