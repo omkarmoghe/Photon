@@ -1,6 +1,12 @@
 import flask
 import data
+from pymongo import MongoClient
 app = flask.Flask(__name__)
+
+mongo_address = 'mongodb://omkar:photos123@ds037175.mlab.com:37175/photos'
+client = MongoClient(mongo_address)
+db = client.photos
+coll = db.data
 
 @app.route('/')
 def hello_world():
@@ -9,6 +15,10 @@ def hello_world():
 @app.route('/reg_user')
 def reg_user():
     # Register user
+    user_object = {
+        contacts: [],
+        photos: []
+    }
     user_id = 1
     return flask.jsonify({
         'user_id': user_id
