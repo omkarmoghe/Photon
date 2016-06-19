@@ -146,7 +146,7 @@ def get_location_title(lat, lon):
     if not location:
         location = "Near ({}, {})".format(lat, lon)
 
-    return location.city
+    return location
 
 
 def sanitize_string(data):
