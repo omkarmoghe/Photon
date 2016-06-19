@@ -53,18 +53,19 @@ def register():
 
 @app.route('/upload_contacts', methods=['POST'])
 def upload_contacts():
+    data = request.get_json()
 
-    contact_data = request.get_json()
     users = db.users
-    user_id = contact_data['user_id']
+    user_id = data['user_id']
     user = users.find_one({'_id': user_id})
+    contacts_list = data['contacts']
 
-    for contact in contact_data:
+    for contact in contacts_list:
         number = contact['number'].strip().replace("-", "")
-        name = contact_data['name']
+        name = contact['name']
 
         # Check that data exists
-        if not number or name:
+        if not (number or name):
             continue
 
         # Check that data is not a duplicate
