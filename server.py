@@ -19,7 +19,7 @@ def hello_world():
 @app.route('/register', methods=['POST'])
 def register():
     # get body of request
-    request_body = request.form
+    request_body = request.get_json()
 
     users = db.users
     user_object = users.find_one({'number': request_body['number']})
