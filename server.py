@@ -139,9 +139,13 @@ def upload_metadata():
 @app.route('/upload_image', methods=['POST'])
 def upload_image():
     file = request.files['file']
-    filename = file.filename
-    print "Saving file to images/"+filename
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    identifier = file.filename
+    filename = "images/"+identifier+".jpeg"
+    print "Saving file to "+filename
+    file.save(filename)
+
+    file_obj = db.images.find_one({"identifier": identifier})
+    file_obj["file"] = filename
     
     return flask.jsonify({
         "filename": filename,
