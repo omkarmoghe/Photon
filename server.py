@@ -158,6 +158,7 @@ def upload_image():
             print "Saving file to " + filename
             file.save(filename)
             file_obj["file"] = filename
+            db.images.update_one({'identifier': identifier}, {'$set': file_obj}, upsert=True)
             return flask.jsonify({
                 "filename": filename,
                 "success": True
