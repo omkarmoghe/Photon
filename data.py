@@ -1,4 +1,5 @@
 # set up mongo
+import geocoder
 from pymongo import MongoClient
 from math import sin, cos, atan2, sqrt
 
