@@ -83,6 +83,7 @@ def find_matching_event(image_object):
 
             if within_distance((img_latitude, img_longitude), (event_image['latitude'], event_image['longitude']),
                                int(img_timestamp), int(event_image['timestamp'])):
+                print "match found"
                 if len(event_images) == 1:
                     last_image = images.find_one(
                         {'identifier': event_images[0]})
