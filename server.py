@@ -101,29 +101,35 @@ def upload_metadata():
     images = db.images
 
     # create image object
-    image_id = data.getNextId("imageid")
+    image_id = metadata['identifier']
     print image_id
     image_object = {
         'user_id': int(metadata['user_id']),
+        'identifier': metadata['identifier'],
         'latitude': metadata['latitude'],
         'longitude': metadata['longitude'],
         'timestamp': metadata['timestamp'],
         'file': None,
-        '_id': image_id
+        '_id': data.getNextId("imageid")
     }
 
     # add image to user
     user_id = image_object['user_id']
-    print type(user_id)
     user = users.find_one({'_id': user_id})
     if user:
         # add the blank image to the database
         user['photos'].append(image_id)
         images.insert_one(image_object)
+        users.update_one({'_id': user_id}, {'$set': user}, upsert=True)
 
         # find a matching event for the metadata
         event = data.find_matching_event(image_object)
+        user = users.find_one({'_id': user_id})
         user['events'].append(event['_id'])
+        users.update_one({'_id': user_id}, {'$set': user}, upsert=True)
+
+        should_upload = bool(image_id in user['owed_images'])
+        return flask.jsonify({"success": True, 'upload': should_upload})
     else:
         return flask.jsonify({"success": False, 'error': 'User not found.'})
 
