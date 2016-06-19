@@ -59,7 +59,7 @@ def get_user_events(user_id):
             event['images'] = images_payload
             events_payload.append(event)
 
-    events_payload.sort(key=lambda e: e['created_at'], reverse=True)
+    events_payload.sort(key=lambda e: e['created_at'], reverse=False)
     return events_payload
 
 
@@ -137,7 +137,7 @@ def within_distance(loc1, loc2, timestamp1, timestamp2):
     t = abs(time_delta.seconds) / 60
     print t
 
-    return d <= .2 and t <= 30
+    return d <= .2 and t <= 120
 
 
 def get_location_title(lat, lon):
