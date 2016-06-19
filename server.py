@@ -1,4 +1,5 @@
-import os, flask, data, random
+import os, flask, data, random, pdb
+from flask import request 
 from pymongo import MongoClient
 app = flask.Flask(__name__)
 
@@ -20,12 +21,12 @@ def register():
     # get body of request
     request_body = request.form
 
-    users = db.users    
+    users = db.users
     user_object = users.find_one({'number': request_body['number']})
 
     if not user_object:
         # Register user
-        user_id = 1  # TODO: generate user id
+        user_id = data.getNextId("userid")
         user_object = {
             '_id': user_id,
             'name': request_body['name'],
@@ -57,11 +58,18 @@ def upload_metadata():
 
     # See if there is a relevant event that this should be added to
 
-    return flask.jsonify({"success"}: True)
+    return flask.jsonify({"success": True})
 
 @app.route('/upload_image', methods=[])
 def upload_image():
     file = request.files['file']
+    filename = ''.join(random.choice('0123456789ABCDEF') for i in range(8))
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    return flask.jsonify({
+        "filename": filename,
+        "success": True
+    })
+
 
 
 
