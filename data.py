@@ -1,6 +1,7 @@
 # set up mongo
 import geocoder
 import datetime
+import time
 from pymongo import MongoClient
 from math import sin, cos, atan2, sqrt
 
@@ -58,6 +59,7 @@ def get_user_events(user_id):
             event['images'] = images_payload
             events_payload.append(event)
 
+    events_payload.sort(key=lambda e: e['created_at'], reverse=True)
     return events_payload
 
 
@@ -106,7 +108,8 @@ def find_matching_event(image_object):
         event_object = {
             '_id': getNextId('eventid'),
             'images': [img_id],
-            'title': g.city
+            'title': g.city,
+            'created_at': time.time()
         }
 
     events.update_one({'_id': event_object['_id']}, {
