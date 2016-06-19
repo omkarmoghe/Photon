@@ -32,7 +32,9 @@ def register():
             'name': request_body['name'],
             'number': request_body['number'],
             'contacts': [],
-            'photos': []
+            'photos': [],
+            'owed_images': [],
+            'events': []
         }
 
         users.insert_one(user_object)
@@ -61,7 +63,7 @@ def upload_metadata():
     images = db.images
 
     # create image object
-    image_id = 1  # TODO: get unique id
+    image_id = data.getNextId("imageid")
     image_object = metadata
     image_object['file'] = None
     image_object['_id'] = image_id
@@ -69,10 +71,16 @@ def upload_metadata():
     # add image to user
     user_id = image_object['user_id']
     user = users.find_one({'_id': user_id})
-    if not user:
-        return flask.jsonify({"success": False, 'error': 'User not found.'})
-    else:
+    if user:
+        # add the blank image to the database
         user['photos'].append(image_id)
+        images.insert_one(image_object)
+
+        # find a matching event for the metadata
+        event = data.find_matching_event(image_object)
+        user['events'].append(event['_id'])
+    else:
+        return flask.jsonify({"success": False, 'error': 'User not found.'})
 
     return flask.jsonify({"success": True})
 
