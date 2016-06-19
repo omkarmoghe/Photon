@@ -53,11 +53,27 @@ def get_events():
 
 @app.route('/upload_metadata', methods=['POST'])
 def upload_metadata():
-    metadata = request.form['metadata']
+    metadata = request.form
 
-    # See if there is a relevant event that this should be added to
+    # get collections
+    users = db.users
+    images = db.images
 
-    return flask.jsonify({"success"}: True)
+    # create image object
+    image_id = 1  # TODO: get unique id
+    image_object = metadata
+    image_object['file'] = None
+    image_object['_id'] = image_id
+
+    # add image to user
+    user_id = image_object['user_id']
+    user = users.find_one({'_id': user_id})
+    if not user:
+        return flask.jsonify({"success": False, 'error': 'User not found.'})
+    else:
+        user['photos'].append(image_id)
+
+    return flask.jsonify({"success": True})
 
 @app.route('/upload_image', methods=[])
 def upload_image():
