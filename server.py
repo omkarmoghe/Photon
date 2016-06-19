@@ -92,7 +92,7 @@ def upload_contacts():
 
 @app.route('/get_events', methods=['POST'])
 def get_events():
-    user_id = request.form['user_id']
+    user_id = request.get_json()['user_id']
     return flask.jsonify(data.get_user_events(int(user_id)))
 
 
