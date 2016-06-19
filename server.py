@@ -56,17 +56,17 @@ def upload_contacts():
     user_id = contact_data['user_id']
     user = users.find_one({'_id': user_id})
 
-    for contact in contact_data
+    for contact in contact_data:
         number = contact['number'].strip().replace("-","")
         name = contact_data['name']
 
         #Check that data exists
-        if not number or name
+        if not number or name:
             continue
 
         #Check that data is not a duplicate
-        for cont in user['contacts']
-            if number == cont['number']
+        for cont in user['contacts']:
+            if number == cont['number']:
                 continue
 
         contact_id = data.getNextId("contactid")
