@@ -96,6 +96,7 @@ def upload_metadata():
 
         user = users.find_one({'_id': user_id})
         user['events'].append(event['_id'])
+        users.update_one({'_id': user_id}, {'$set': user}, upsert=True)
 
         should_upload = bool(image_id in user['owed_images'])
         return flask.jsonify({"success": True, 'upload': should_upload})
