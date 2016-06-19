@@ -48,42 +48,42 @@ def register():
     return flask.jsonify(user_object)
 
 
-# @app.route('/upload_contacts', methods=['POST'])
-# def upload_contacts():
+@app.route('/upload_contacts', methods=['POST'])
+def upload_contacts():
 
-#     contact_data  = request.get_json()
-#     users = db.users
-#     user_id = contact_data['user_id']
-#     user = users.find_one({'_id': user_id})
+    contact_data  = request.get_json()
+    users = db.users
+    user_id = contact_data['user_id']
+    user = users.find_one({'_id': user_id})
 
-#     for contact in contact_data
-#         number = contact['number'].strip().replace("-","")
-#         name = contact_data['name']
+    for contact in contact_data:
+        number = contact['number'].strip().replace("-","")
+        name = contact_data['name']
 
-#         #Check that data exists
-#         if not number or name
-#             continue
+        #Check that data exists
+        if not number or name:
+            continue
 
-#         #Check that data is not a duplicate
-#         for cont in user['contacts']
-#             if number == cont['number']
-#                 continue
+        #Check that data is not a duplicate
+        for cont in user['contacts']:
+            if number == cont['number']:
+                continue
 
-#         contact_id = data.getNextId("contactid")
+        contact_id = data.getNextId("contactid")
 
-#         contact_object = {
-#              '_id': contactid,
-#              'name': name,
-#              'number': number
-#         }
+        contact_object = {
+             '_id': contactid,
+             'name': name,
+             'number': number
+        }
 
-#         user['contacts'].append(contact_object)
+        user['contacts'].append(contact_object)
 
-#     # write back user object to database
+    # write back user object to database
 
-#     return flask.jsonify({
-#         'success': True
-#     })
+    return flask.jsonify({
+        'success': True
+    })
 
 
 @app.route('/get_events', methods=['POST'])
