@@ -102,7 +102,7 @@ def upload_metadata():
     images = db.images
 
     # create image object
-    image_id = metadata['identifier']
+    image_id = metadata['identifier'].replace("/", "-")
     print image_id
     image_object = {
         'user_id': int(metadata['user_id']),
@@ -140,7 +140,7 @@ def upload_metadata():
 @app.route('/upload_image', methods=['POST'])
 def upload_image():
     file = request.files['file']
-    identifier = file.filename
+    identifier = file.filename.replace("/", "-")
     filename = os.path.join(app.config['UPLOAD_FOLDER'], identifier)
     print "Saving file to "+filename
     file.save(filename)
