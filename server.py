@@ -141,17 +141,24 @@ def upload_metadata():
 def upload_image():
     file = request.files['file']
     identifier = file.filename
-    filename = "images/"+identifier+".jpeg"
+    filename = os.path.join(app.config['UPLOAD_FOLDER'], identifier)
     print "Saving file to "+filename
     file.save(filename)
 
     file_obj = db.images.find_one({"identifier": identifier})
-    file_obj["file"] = filename
-    
-    return flask.jsonify({
-        "filename": filename,
-        "success": True
-    })
+
+    if file_obj is not None:
+        file_obj["file"] = filename
+        return flask.jsonify({
+            "filename": filename,
+            "success": True
+        })
+    else:
+        return flask.jsonify({
+            "filename": filename,
+            "success": False,
+            "message": "Coldn't find the existing file object for this image!"
+        })
 
     
 @app.route('/get_owed_images', methods=['POST'])
