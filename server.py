@@ -64,7 +64,7 @@ def get_events():
 
 @app.route('/upload_metadata', methods=['POST'])
 def upload_metadata():
-    metadata = request.form
+    metadata = request.get_json()
 
     # get collections
     users = db.users
