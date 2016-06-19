@@ -37,7 +37,7 @@ def find_matching_event(image_object):
     matching_events = db.events.find()
     for event in matching_events:
         event_images = event['images']
-        for event_image_id in event_images
+        for event_image_id in event_images:
             event_image = images.find_one({'_id': event_image_id})
             
             if within_distance((img_latitude, img_longitude), (event_image['latitude'], event_image['longitude'])):
