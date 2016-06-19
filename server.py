@@ -50,7 +50,37 @@ def register():
 
 @app.route('/upload_contacts', methods=['POST'])
 def upload_contacts():
-    data = request.form
+
+    contact_data  = request.get_json()
+    users = db.users
+    user_id = contact_data['user_id']
+    user = users.find_one({'_id': user_id})
+
+    for contact in contact_data
+        number = contact['number'].strip().replace("-","")
+        name = contact_data['name']
+
+        #Check that data exists
+        if not number or name
+            continue
+
+        #Check that data is not a duplicate
+        for cont in user['contacts']
+            if number == cont['number']
+                continue
+
+        contact_id = data.getNextId("contactid")
+
+        contact_object = {
+             '_id': contactid,
+             'name': name,
+             'number': number
+        }
+
+        user['contacts'].append(contact_object)
+
+    # write back user object to database
+
     return flask.jsonify({
         'success': True
     })
@@ -71,37 +101,33 @@ def upload_metadata():
     images = db.images
 
     # create image object
-    image_id = metadata['identifier']
+    image_id = data.getNextId("imageid")
+    print image_id
     image_object = {
         'user_id': int(metadata['user_id']),
-        'identifier': metadata['identifier'],
         'latitude': metadata['latitude'],
         'longitude': metadata['longitude'],
         'timestamp': metadata['timestamp'],
         'file': None,
-        '_id': data.getNextId("imageid")
+        '_id': image_id
     }
 
     # add image to user
     user_id = image_object['user_id']
+    print type(user_id)
     user = users.find_one({'_id': user_id})
     if user:
         # add the blank image to the database
         user['photos'].append(image_id)
         images.insert_one(image_object)
-        users.update_one({'_id': user_id}, {'$set': user}, upsert=True)
 
         # find a matching event for the metadata
         event = data.find_matching_event(image_object)
-
-        user = users.find_one({'_id': user_id})
         user['events'].append(event['_id'])
-        users.update_one({'_id': user_id}, {'$set': user}, upsert=True)
-
-        should_upload = bool(image_id in user['owed_images'])
-        return flask.jsonify({"success": True, 'upload': should_upload})
     else:
         return flask.jsonify({"success": False, 'error': 'User not found.'})
+
+    return flask.jsonify({"success": True})
 
 
 @app.route('/upload_image', methods=['POST'])
@@ -119,7 +145,7 @@ def upload_image():
     
 @app.route('/get_owed_images', methods=['POST'])
 def get_owed_images():
-    metadata = request.form
+    metadata = request.get_json()
     users = db.users
     user_id = metadata['user_id']
     user = users.find_one({'_id': user_id})
