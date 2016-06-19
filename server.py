@@ -64,7 +64,7 @@ def get_events():
 
 @app.route('/upload_metadata', methods=['POST'])
 def upload_metadata():
-    metadata = request.form
+    metadata = request.get_json()
 
     # get collections
     users = db.users
@@ -114,6 +114,16 @@ def upload_image():
         "filename": filename,
         "success": True
     })
+
+    
+@app.route('/get_owed_images', methods=['POST'])
+def get_owed_images():
+    metadata = request.form
+    users = db.users
+    user_id = metadata['user_id']
+    user = users.find_one({'_id': user_id})
+    return user['owed_images']
+
 
 
 if __name__ == "__main__":
