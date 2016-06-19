@@ -148,7 +148,7 @@ def upload_metadata():
 @app.route('/upload_image', methods=['POST'])
 def upload_image():
     file = request.files['file']
-    identifier = file.filename.replace("/", "-")
+    identifier = file.filename.replace("/", "-")[:-4]
     filename = os.path.join(app.config['UPLOAD_FOLDER'], identifier)
     file_obj = db.images.find_one({"identifier": identifier})
 
