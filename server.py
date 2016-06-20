@@ -4,6 +4,7 @@ import data
 import pdb
 from flask import request
 from pymongo import MongoClient
+from secrets import MLAB_USER, MLAB_PW
 app = flask.Flask(__name__)
 
 # Setting up uploads
@@ -11,14 +12,14 @@ UPLOAD_FOLDER = 'images/'
 ALLOWED_EXTENSIONS = set(['jpeg'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-mongo_address = 'mongodb://omkar:photos123@ds037175.mlab.com:37175/photos'
+mongo_address = 'mongodb://{}:{}@ds037175.mlab.com:37175/photos'.format(MLAB_USER, MLAB_PW)
 client = MongoClient(mongo_address)
 db = client.photos
 
 
 @app.route('/')
 def hello_world():
-    return 'P H O T O S'
+    return 'P H O T O N'
 
 
 @app.route('/register', methods=['POST'])
