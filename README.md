@@ -12,6 +12,8 @@ Sharing photos is a pain in the ass. You shouldn't have to scroll through a list
 Photon's backend is built on a Python stack using Flask and MongoDB. The datbase is hosted on MLab. The iOS client is built on Swift and Objective-C.
 
 ### Building
+Install all the requirements: `pip install -r requirements.txt`
+
 Create a `secrets.py` file in the root directory with the following MLab database user credentials:
 
 ```Python
